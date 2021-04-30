@@ -112,7 +112,7 @@ d3.json(url).then(function(data) {
                   mouseover: function(event) {
                     layer = event.target;
                     layer.setStyle({
-                      radius:size(mag) +4,
+                      radius:size(mag) +5,
                       color: `#001`,
                       weight:3,
                       fillOpacity: 1 });
@@ -138,27 +138,31 @@ d3.json(url).then(function(data) {
         earthquakes: mylayer
       }
 
-      //createLayerControl(overlayMaps) ;
+    createLayerControl(overlayMaps) ;
 
       });
 
-//Create a base layer object to add to the layer control later
-var baseLayer = {
-  StreetMap: Streetmap,
-  SatelliteMap: Satellite
-}
+    // Function to create a toggle layer
+    function createLayerControl(overlayMaps){
+      //Create a base layer object to add to the layer control later
+      var baseLayer = {
+        StreetMap: Streetmap,
+        SatelliteMap: Satellite
+      }
 
-// // Initialize all of the LayerGroups we'll be using
-// var earthquake = L.LayerGroup() ;
-// var tectonicPlates = L.LayerGroup() ;
+      // // Initialize all of the LayerGroups we'll be using
+      // var earthquake = L.LayerGroup() ;
+      // var tectonicPlates = L.LayerGroup() ;
 
-// Create an overlays object to add to the layer control
-// overlayMap = {
-//   Earthquakes : earthquake,
-//   Tectonicplates : tectonicPlates
-// }
+      // Create an overlays object to add to the layer control
+      // overlayMap = {
+      //   Earthquakes : earthquake,
+      //   Tectonicplates : tectonicPlates
+      // }
 
-// Create a control for our layers, add our overlay layers to it
-L.control.layers(baseLayer).addTo(map);
+      // Create a control for our layers, add our overlay layers to it
+      L.control.layers(baseLayer,overlayMaps).addTo(map);
+    }
+
 
 
