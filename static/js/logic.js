@@ -29,16 +29,7 @@ var Satellite = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}
 
 url = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson"
 
-
-// Perform a GET request to the query URL
-d3.json(url).then(function(data) {
-  
-      EathquakeDataFeatures = data.features ;
-      //print data
-      console.log('GeoJson Features:', EathquakeDataFeatures);
-
-
-    //Function Set color of the Circle - by Depth
+//Function Set color of the Circle - by Depth
     //-----------------------------------------------------//
     function setStyle(d) {
       //console.log(mag)
@@ -64,7 +55,16 @@ d3.json(url).then(function(data) {
         return '#336666' ;
       }
     }
+
+// Perform a GET request to the query URL
+d3.json(url).then(function(data) {
   
+      EathquakeDataFeatures = data.features ;
+      //print data
+      console.log('GeoJson Features:', EathquakeDataFeatures);
+
+
+    
   //Function Set Radius of the Circle - size by magnitude
   //-----------------------------------------------------//
   function size(mag) {
@@ -139,6 +139,7 @@ d3.json(url).then(function(data) {
       }
 
     createLayerControl(overlayMaps) ;
+    createLegend();
 
       });
 
@@ -163,6 +164,44 @@ d3.json(url).then(function(data) {
       // Create a control for our layers, add our overlay layers to it
       L.control.layers(baseLayer,overlayMaps).addTo(map);
     }
+
+
+//=======================================================================//
+//function to create a Legend creation //
+//=======================================================================//
+
+function createLegend() {
+      // Create a legend to display information about our map
+      var info = L.control({
+        position: "bottomright"
+      });
+      
+      // When the layer control is added, insert a div with the class of "legend"
+      info.onAdd = function() {        
+
+      var div = L.DomUtil.create('div', 'info legend'),
+      grades = [-10,10,30,50,70,90],
+      //upper = [10,30,50,70,90,'+'],
+      labels = [];
+      
+      // loop through our density intervals and generate a label with a colored square for each interval
+      for (var i = 0; i < grades.length; i++) {
+        div.innerHTML +=
+            '<i style="background:' + setStyle(grades[i] + 1) + '"></i> ' +'<h3>' +
+            grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '</h3>' + '<br>' : '+');
+    }
+      return div;
+
+      };
+      
+      // Add the info legend to the map
+      info.addTo(map);
+      
+}
+
+
+
+
 
 
 
