@@ -18,9 +18,15 @@ var Satellite = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}
   tileSize: 512,
   maxZoom: 18,
   zoomOffset: -1,
-  id: "mapbox/satellite-v9",
+  id: "mapbox/satellite-streets-v11",
   accessToken: API_KEY
 });
+
+var OpenTopoMap = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+	maxZoom: 17,
+	attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+});
+
 
 
 //================================================================//
@@ -132,34 +138,37 @@ d3.json(url).then(function(data) {
               }
     }).addTo(map);
 
+    //Create a overlay map for tectonic Plates
+    url = "https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_plates.json"
+    d3.json(url).then(function(tectonicPlatesData) {
 
-    
+      var myTectonicLayer = L.geoJSON(tectonicPlatesData);
+
+
       overlayMaps = {
-        earthquakes: mylayer
+        Earthquakes: mylayer,
+        TectonicLayer : myTectonicLayer
       }
 
     createLayerControl(overlayMaps) ;
     createLegend();
 
-      });
+      
+    });
+  });
 
-    // Function to create a toggle layer
+  //=======================================================================//
+//function to create a Toggle Control //
+//=======================================================================//
+
+    // Creat reate a Toggle Control
     function createLayerControl(overlayMaps){
       //Create a base layer object to add to the layer control later
       var baseLayer = {
         StreetMap: Streetmap,
+        TopoMap:OpenTopoMap,
         SatelliteMap: Satellite
       }
-
-      // // Initialize all of the LayerGroups we'll be using
-      // var earthquake = L.LayerGroup() ;
-      // var tectonicPlates = L.LayerGroup() ;
-
-      // Create an overlays object to add to the layer control
-      // overlayMap = {
-      //   Earthquakes : earthquake,
-      //   Tectonicplates : tectonicPlates
-      // }
 
       // Create a control for our layers, add our overlay layers to it
       L.control.layers(baseLayer,overlayMaps).addTo(map);
@@ -167,7 +176,7 @@ d3.json(url).then(function(data) {
 
 
 //=======================================================================//
-//function to create a Legend creation //
+//function to create a Legend //
 //=======================================================================//
 
 function createLegend() {
@@ -187,8 +196,8 @@ function createLegend() {
       // loop through our density intervals and generate a label with a colored square for each interval
       for (var i = 0; i < grades.length; i++) {
         div.innerHTML +=
-            '<i style="background:' + setStyle(grades[i] + 1) + '"></i> ' +'<h3>' +
-            grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '</h3>' + '<br>' : '+');
+            '<i style="background:' + setStyle(grades[i] + 1) + '"></i> ' +'<b>' +
+            grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '</b>' + '<br>' : '+');
     }
       return div;
 
